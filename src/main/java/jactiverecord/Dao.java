@@ -55,14 +55,17 @@ public class Dao extends BasicObject {
   }
 
   public int executeDml(String query, Object ...parameters){
-    p("Executing: " + query + " with " + parameters);
+    p("Executing: " + query + " with " + list(parameters));
     try (
         Connection connection = DriverManager.getConnection(getDatabaseUrl());
         PreparedStatement ps = connection.prepareStatement(query, array("id"));
     ) {
       int i = 1;
-      for(Object object : parameters)
+      
+      for(Object object : parameters) {
+        p("Setting parameter " + i + " with " + object);
           ps.setObject(i++, object);
+      }
       ps.execute();
       int primaryKey = primaryKeyGeneratedBy(ps);
       if (primaryKey != -1) return primaryKey;
