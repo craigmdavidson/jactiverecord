@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Inflector {
-  public static Inflections inflections = new Inflections(); 
+  public static final Inflections inflections = new Inflections(); 
   static {
     uncountable("equipment", "information", "money", "species", "series", "fish", "sheep");
     irregular("octopus", "octupi");
@@ -98,6 +98,7 @@ class InflectionList extends ArrayList<String>{
 }
 
 class InflectionMap extends HashMap<String, String>{
+  private static final long serialVersionUID = -4163118581291898033L;
   public String put(String a, String b){
     return super.put(a.toLowerCase(), b.toLowerCase());
   }

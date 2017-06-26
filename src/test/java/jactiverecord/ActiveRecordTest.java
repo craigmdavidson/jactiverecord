@@ -54,6 +54,48 @@ public class ActiveRecordTest extends DatabaseFixturing {
     p("Record should be gone " + deleted);
     assertNull(deleted);
   }  
+  
+  @Test public void test_find_by_id_with_record_present() {
+    Product product = new Product();
+    product.setAttributes(map("name", "Hat", "sku", 4));
+    assertTrue(product.save());
+    long id = product.getId();
+    
+    Product created = ActiveRecord.find(id, Product.class);
+    assertEquals("Hat", created.getName());
+  }
+  
+  @Test public void test_find_by_id_with_no_record_present() {
+    assertNull(ActiveRecord.find(-100, Product.class));
+  }
+  
+  @Test public void test_set_attributes(){
+    Product product = new Product();
+    product.setAttributes(map("name", "Hat", "sku", 4));
+    assertEquals("Hat", product.getName());
+    assertEquals(4, product.getSku());
+  }
+  
+  @Test public void test_get_attributes(){
+    Product product = new Product();
+    product.setName("Hat");
+    product.setSku(4);
+    assertEquals(map(
+        "name", "Hat", 
+        "sku", 4, 
+        "id", 0, 
+        "created_at", null, 
+        "updated_at", null).toString(), product.getAttributes().toString());
+  }
+  
+  @Test public void test_table_name_is_pluralized_simple_class_name_if_not_specified(){
+    assertEquals("products", ActiveRecord.tableName(Product.class));
+  }
+  
+  @Test public void test_table_name_declared_table_name_if_present(){
+    assertEquals("products", ActiveRecord.tableName(SpecialProduct.class));
+  }
+  
 }
 
 class Product extends ActiveRecord {
@@ -65,6 +107,10 @@ class Product extends ActiveRecord {
   
   public int getSku() { return sku; }
   public void setSku(int sku) { this.sku = sku; }
+}
+
+class SpecialProduct extends Product {
+  static final String tableName = "products";
 }
 
 

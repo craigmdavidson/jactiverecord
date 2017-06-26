@@ -28,7 +28,11 @@ public class ActiveRecord extends BaseRecord {
   public static <T extends ActiveRecord> T firstWhere(Class<? extends BaseRecord> recordClass, String whereClause, Object ...parameters) {
     return first(where(recordClass, whereClause, parameters));
   }
-
+  
+  public static <T extends ActiveRecord> T find(long id, Class<? extends ActiveRecord> klass) {
+    return firstWhere(klass, "id = ?", id);
+  }
+  
   public static String queryFor(Class<? extends BaseRecord> recordClass, String whereClause) {
     return "SELECT * FROM " + tableName(recordClass) + " WHERE " + whereClause;
   }
@@ -36,8 +40,10 @@ public class ActiveRecord extends BaseRecord {
   public static String tableName(Class<? extends BaseRecord> recordClass) {
     try {
       Field tableName = recordClass.getDeclaredField("tableName");
-      if (tableName != null && isStatic(tableName.getModifiers()))
+      if (tableName != null && isStatic(tableName.getModifiers())) {
+        tableName.setAccessible(true);
         return (String)tableName.get(recordClass);
+      }
       else
         return Inflector.pluralize(recordClass.getSimpleName().toLowerCase());
     } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -155,4 +161,5 @@ public class ActiveRecord extends BaseRecord {
         "SET ", params,
         "WHERE id = ?");
   }
+  
 }
