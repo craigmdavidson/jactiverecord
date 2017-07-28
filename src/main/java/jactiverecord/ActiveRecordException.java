@@ -5,4 +5,5 @@ public class ActiveRecordException extends RuntimeException {
   
   public ActiveRecordException(Exception e) { super(e); }
   public ActiveRecordException(String message, Exception e) { super(message, e); }
+  public ActiveRecordException(String message) { super(message); }
 }

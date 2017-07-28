@@ -41,6 +41,7 @@ public class Dao extends BasicObject {
   }
 
   private String getDatabaseUrl() {
+    if (databaseUrl == null) throw new ActiveRecordException("Database URL needs to be specified");
     return databaseUrl;
   }
 
@@ -63,8 +64,8 @@ public class Dao extends BasicObject {
       int i = 1;
       
       for(Object object : parameters) {
-        p("Setting parameter " + i + " with " + object);
-          ps.setObject(i++, object);
+        //p("Setting parameter " + i + " with " + object);
+        ps.setObject(i++, object);
       }
       ps.execute();
       int primaryKey = primaryKeyGeneratedBy(ps);

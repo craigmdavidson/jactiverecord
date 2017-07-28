@@ -4,6 +4,7 @@ import static java.lang.reflect.Modifier.isStatic;
 import static java.lang.reflect.Modifier.isTransient;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -99,7 +100,14 @@ public class ActiveRecord extends BaseRecord {
     try {
       if (value == null) return;
       field.setAccessible(true);
-      field.set(this, value);
+
+      // fields are naturally stored as BigDecimal but may be used in class as doubles
+      // coerce any bigdecimals into doubles
+      if (field.getType().equals(double.class) && value instanceof BigDecimal) {
+        field.set(this, ((BigDecimal)value).doubleValue());
+      } else {
+        field.set(this, value);
+      }
       field.setAccessible(false);
     } catch (Exception e) {
       throw new ActiveRecordException(e);
